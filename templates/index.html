@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            min-height: 100vh;
+            background: #1a1a1a;
+        }
+
+        .weather-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            transition: all 0.5s ease-in-out;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('https://images.unsplash.com/photo-1580193769210-b8d1c049a7d9');
+        }
+
+        .weather-background.rainy {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('https://images.unsplash.com/photo-1519692933481-e162a57d6721');
+        }
+
+        .weather-background.sunny {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                url('https://images.unsplash.com/photo-1622278647429-71b91779df3c');
+        }
+
+        .weather-background.cloudy {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                url('https://images.unsplash.com/photo-1534274988757-a28bf1a57c17');
+        }
+
+        .weather-background.cold {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                url('https://images.unsplash.com/photo-1516431883659-655d41c09bf9');
+        }
+
+        .weather-background.clear {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                url('https://images.unsplash.com/photo-1504608524841-42fe6f032b4b');
+        }
+
+        .weather-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-search, .btn-location {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .btn-search:hover, .btn-location:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-location {
+            padding: 10px 20px;
+            margin-top: 15px;
+        }
+
+        .current-weather {
+            text-align: center;
+            color: white;
+            margin: 30px 0;
+        }
+
+        .weather-icon {
+            font-size: 4em;
+            margin: 20px 0;
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        .temperature {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .forecast-section {
+            margin-top: 40px;
+        }
+
+        .forecast-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .forecast-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .forecast-icon {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .alert {
+            background: rgba(255, 68, 68, 0.2);
+            border: none;
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Add these responsive styles inside the existing <style> tag */
+
+/* Small devices (phones) */
+@media (max-width: 576px) {
+    .temperature {
+        font-size: 2.5em;
+    }
+    
+    .weather-icon {
+        font-size: 3em;
+    }
+    
+    .forecast-section .row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
+    
+    .forecast-card {
+        min-width: 120px;
+    }
+    
+    .weather-card {
+        margin: 10px;
+        padding: 15px !important;
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .input-group .form-control,
+    .input-group .btn-search {
+        width: 100%;
+        margin: 5px 0;
+        border-radius: 10px !important;
+    }
+}
+
+/* Medium devices (tablets) */
+@media (max-width: 768px) {
+    .col-md-8 {
+        padding: 0 15px;
+    }
+    
+    .details.row {
+        font-size: 0.9em;
+    }
+    
+    .btn-location {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 992px) {
+    .weather-card {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .forecast-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .forecast-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Additional touch-friendly improvements */
+@media (hover: none) {
+    .btn-search:hover,
+    .btn-location:hover,
+    .forecast-card:hover {
+        transform: none;
+    }
+    
+    .form-control,
+    .btn-search,
+    .btn-location {
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+footer {
+    position: relative;
+    z-index: 1;
+}
+
+footer .weather-card {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="weather-background {% if weather %}{{ weather.condition }}{% endif %}"></div>
+    
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="weather-card p-4 animate__animated animate__fadeIn">
+                    <h1 class="text-center text-white mb-4">Weather Forecast</h1>
+                    
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert animate__animated animate__shakeX">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="city" placeholder="Enter city name">
+                            <button type="submit" class="btn btn-search">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-location" onclick="getLocation()">
+                                <i class="fas fa-location-dot"></i> Use My Location
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if weather %}
+                    <div class="current-weather">
+                        <h2>{{ weather.city }}</h2>
+                        <p>{{ weather.date }}</p>
+                        <i class="{{ weather.icon }} weather-icon"></i>
+                        
+
+                        <div class="temperature">{{ weather.temperature }}°C</div>
+                        <div class="details row text-center mt-4">
+                            <div class="col-4">
+                                <i class="fas fa-tint mb-2"></i>
+                                <div>Humidity</div>
+                                <div>{{ weather.humidity }}%</div>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-wind mb-2"></i>
+                                <div>Wind Speed</div>
+                                <div>{{ weather.wind_speed }} m/s</div>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-cloud-rain mb-2"></i>
+                                <div>Precipitation</div>
+                                <div>{{ weather.precipitation }}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="forecast-section">
+                        <h3 class="text-white mb-4">5-Day Forecast</h3>
+                        <div class="row g-3">
+                            {% for day in weather.forecast %}
+                            <div class="col">
+                                <div class="forecast-card">
+                                    <div>{{ day.date }}</div>
+                                    <i class="{{ day.icon }} forecast-icon"></i>
+                                    <div>{{ day.temperature }}°C</div>
+                                    <div>{{ day.precipitation }}%</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="text-center text-white py-4 mt-5">
+        <div class="weather-card p-3">
+            <p class="mb-0">
+                <i class="far fa-copyright"></i> 2024 Avijnan Purkait | All Rights Reserved
+            </p>
+        </div>
+    </footer>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            const locationBtn = document.querySelector('.btn-location');
+            locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting Location...';
+            navigator.geolocation.getCurrentPosition(submitPosition, handleLocationError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function submitPosition(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        
+        const formData = new FormData();
+        formData.append('latitude', lat);
+        formData.append('longitude', lon);
+        formData.append('use_location', 'true');
+        
+        fetch('/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.documentElement.innerHTML = html;
+        });
+    }
+
+    function handleLocationError(error) {
+        const locationBtn = document.querySelector('.btn-location');
+        locationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Use My Location';
+        
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("Please allow location access to use this feature.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("Location request timed out.");
+                break;
+            default:
+                alert("An unknown error occurred.");
+                break;
+        }
+    }
+    </script>
+</body>
+</html>
