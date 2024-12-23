@@ -94,7 +94,7 @@ def process_weather_data(data, location_name):
 def index():
     weather_data = None
     if request.method == 'POST':
-        API_KEY = 'potbDqdfctHifxoxZtsCYwYOQnc3gBVi'
+        API_KEY = 'z5983slgB3SIeZfjVvKQ23CI0Lm7PyTa'
         
         if 'use_location' in request.form:
             lat = request.form.get('latitude')
